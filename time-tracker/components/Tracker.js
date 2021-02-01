@@ -5,149 +5,94 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { styles, input, btn, text, swipeDrawer } from "../css";
 
 const Tracker = (props) => {
-  const swiper = useRef(null);
-
-  const [start, setStart] = useState(props.start);
-  const [isActive, setIsActive] = useState(props.isActive);
   const [title, setTitle] = useState(props.title);
   const [description, setDescription] = useState(props.description);
+  const [start, setStart] = useState(props.start);
+  const [prevLog, setPrevLog] = useState([]);
+  const [isActive, setIsActive] = useState(props.isActive);
+
   const [timeSince, setTimeSince] = useState(0);
-  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (isActive) {
       const timer = setTimeout(() => {
         setTimeSince(timeSince + 1);
       }, 1000);
-      return () => clearInterval(timer);
+      return () => clearTimeout(timer);
     }
   });
 
-  const startTimer = () => {
+  const startNewLog = () => {
     setTimeSince(0);
     setIsActive(true);
     setStart(Date.now());
   };
 
-  const stopTimer = () => {
+  const stop = () => {
+    const end = Date.now();
+    const duration = end - start;
+
+    const log = {
+      start: start,
+      end: end,
+      duration: duration,
+    };
+    setPrevLog([...prevLog, log]);
     setIsActive(false);
   };
 
-  const resumeTimer = () => {
-    setIsActive(true);
-  };
-
-  const resetTimer = () => {
-    setTimeSince(0);
-    setStart(0);
-  };
-
-  const edit = () => {
-    setEditing(!editing);
-    swiper.current.close();
-  };
-
-  const saveEdit = () => {
-    setEditing(false);
-  };
-
-  const deleteTimer = () => {
-    const newArr = props.trackers.filter((tracker) => tracker.id !== props.id);
-    props.setTrackers(newArr);
-  };
-
-  const swipeRight = () => {
-    return (
-      <View style={[swipeDrawer.card, swipeDrawer.shadow]}>
-        <TouchableOpacity style={[btn.full, btn.green, btn.btn]} onPress={edit}>
-          <Text style={[text.white]}>Edit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[btn.full, btn.red, btn.btn]}
-          onPress={deleteTimer}
-        >
-          <Text style={[text.white]}>Delete</Text>
-        </TouchableOpacity>
-      </View>
-    );
+  const total = () => {
+    let output = 0;
+    prevLog.forEach((item) => {
+      output += item.duration;
+    });
+    return output;
   };
 
   return (
-    <Swipeable renderRightActions={swipeRight} ref={swiper}>
+    <Swipeable>
       <View style={[styles.card, styles.shadow]}>
         <TextInput
-          style={[
-            input.input,
-            input.radius,
-            editing ? input.active : input.disabled,
-          ]}
-          onChangeText={setTitle}
+          style={[input.input, input.radius, input.active]}
           value={title}
-          placeholder="Tracker Name"
-          editable={editing}
+          onChange={setTitle}
+          placeholder="Time Tracker Name"
         />
         <TextInput
-          style={[
-            input.input,
-            input.radius,
-            input.textArea,
-            editing ? input.active : input.disabled,
-          ]}
-          onChangeText={setDescription}
+          style={[input.input, input.radius, input.textArea, input.active]}
           value={description}
-          multiline={true}
-          placeholder="Tracker Description"
-          editable={editing}
+          onChange={setDescription}
+          placeholder="Time Tracker Description"
         />
+        <Text>{clock(timeSince)}</Text>
         <View style={btn.btnContainer}>
-          {isActive && timeSince >= 0 && (
+          {isActive ? (
             <TouchableOpacity
-              style={[btn.btn, btn.half, btn.red]}
-              onPress={stopTimer}
+              style={[btn.btn, btn.full, btn.red]}
+              onPress={stop}
             >
-              <Text style={[text.text, text.white]}>Stop</Text>
+              <Text style={[text.white]}>Stop</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[btn.btn, btn.full, btn.green]}
+              onPress={startNewLog}
+            >
+              <Text style={[text.white]}>Start</Text>
             </TouchableOpacity>
           )}
-
-          {!isActive && timeSince === 0 && (
-            <TouchableOpacity
-              style={[btn.btn, btn.half, btn.green]}
-              onPress={startTimer}
-            >
-              <Text style={[text.text, text.white]}>Start</Text>
-            </TouchableOpacity>
-          )}
-
-          {!isActive && timeSince > 0 && (
-            <TouchableOpacity
-              style={[btn.btn, btn.half, btn.green]}
-              onPress={resumeTimer}
-              // disabled={isActive}
-            >
-              <Text style={[text.text, text.white]}>resume</Text>
-              {isActive && <View style={btn.disabled}></View>}
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity
-            style={[btn.btn, btn.half, btn.red]}
-            onPress={resetTimer}
-            disabled={isActive}
-          >
-            <Text style={[text.text, text.white]}>Reset</Text>
-            {isActive && <View style={btn.disabled}></View>}
-          </TouchableOpacity>
         </View>
-        {start !== 0 && <Text>Started: {unixToDateTime(start)}</Text>}
-        <Text>timer: {clock(timeSince)} seconds</Text>
-        {editing && (
-          <TouchableOpacity
-            style={[btn.btn, btn.full, btn.green]}
-            onPress={saveEdit}
-          >
-            <Text style={[text.text, text.white]}>Save</Text>
-          </TouchableOpacity>
-        )}
+
+        {prevLog.map((item, i) => {
+          return (
+            <View key={i}>
+              <Text>start: {new Date(item.start).toISOString()}</Text>
+              <Text>end: {new Date(item.end).toISOString()}</Text>
+              <Text>{clock(item.duration / 1000)}</Text>
+            </View>
+          );
+        })}
+        <Text>Total: {clock(total() / 1000)}</Text>
       </View>
     </Swipeable>
   );

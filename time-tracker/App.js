@@ -5,7 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { styles } from "./css";
 
-import { TrackerScreen, HomeScreen } from "./components";
+import { TrackerScreen, TimerScreen } from "./screens";
 
 const Tab = createBottomTabNavigator();
 
@@ -15,8 +15,8 @@ export default function App() {
       <SafeAreaView style={styles.container}>
         <StatusBar style="auto" />
         <Tab.Navigator>
-          <Tab.Screen name="Home" component={HomeScreen} />
           <Tab.Screen name="Time Tracker" component={TrackerScreen} />
+          <Tab.Screen name="Stopwatch" component={TimerScreen} />
         </Tab.Navigator>
       </SafeAreaView>
     </NavigationContainer>

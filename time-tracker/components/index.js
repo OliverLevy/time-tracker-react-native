@@ -1,4 +1,6 @@
-import HomeScreen from "./Home";
-import TrackerScreen from "./TrackerScreen";
+import NewTracker from "./NewTracker";
+import Tracker from "./Tracker";
+import Timer from "./Timer";
+import NewTimer from "./NewTimer";
 
-export { HomeScreen, TrackerScreen };
+export { NewTracker, Tracker, Timer, NewTimer };

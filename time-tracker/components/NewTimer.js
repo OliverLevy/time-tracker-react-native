@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import { styles, input, btn, text } from "../css";
 
-const NewTracker = ({ setTrackers }) => {
+const NewTimer = ({ setTimers }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -17,7 +17,7 @@ const NewTracker = ({ setTrackers }) => {
       id: Date.now(),
       isActive: true,
     };
-    setTrackers((item) => [...item, output]);
+    setTimers((item) => [...item, output]);
     titleInput.current.clear();
     descriptionInput.current.clear();
     setTitle("");
@@ -26,18 +26,18 @@ const NewTracker = ({ setTrackers }) => {
 
   return (
     <>
-      <Text style={text.header}>time tracker</Text>
+      <Text style={text.header}>Stopwatch</Text>
       <TextInput
         style={[input.input, input.radius, input.active]}
         onChangeText={setTitle}
-        placeholder="Tracker Name"
+        placeholder="Stopwatch Name"
         ref={titleInput}
       />
       <TextInput
         style={[input.input, input.radius, input.textArea, input.active]}
         onChangeText={setDescription}
         multiline={true}
-        placeholder="Tracker Description"
+        placeholder="Stopwatch Description"
         ref={descriptionInput}
       />
       <View style={btn.container}>
@@ -45,11 +45,11 @@ const NewTracker = ({ setTrackers }) => {
           style={[btn.btn, btn.full, btn.green]}
           onPress={startTimer}
         >
-          <Text style={[text.text, text.white]}>Start New Time Tracker</Text>
+          <Text style={[text.text, text.white]}>Start New Stopwatch</Text>
         </TouchableOpacity>
       </View>
     </>
   );
 };
 
-export default NewTracker;
+export default NewTimer;

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { TouchableWithoutFeedback, Keyboard, View, Text } from "react-native";
-import NewTracker from "./NewTracker";
-import Tracker from "./Tracker";
+import { Tracker, NewTracker } from "../components";
 import { styles } from "../css";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
