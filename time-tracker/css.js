@@ -27,7 +27,10 @@ export const text = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: -2,
     textAlign: "center",
-    paddingVertical: 20,
+    paddingVertical: 10,
+  },
+  title: {
+    fontWeight: "bold",
   },
   text: {
     fontSize: 16,

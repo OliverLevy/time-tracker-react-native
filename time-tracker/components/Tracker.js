@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { unixToDateTime, clock } from "../helpers";
+import React, { useState, useEffect } from "react";
+import { clock } from "../helpers";
 import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-import { styles, input, btn, text, swipeDrawer } from "../css";
+import { styles, input, btn, text } from "../css";
+import TrackerLogModal from "./TrackerLogModal";
 
 const Tracker = (props) => {
   const [title, setTitle] = useState(props.title);
@@ -10,7 +11,6 @@ const Tracker = (props) => {
   const [start, setStart] = useState(props.start);
   const [prevLog, setPrevLog] = useState([]);
   const [isActive, setIsActive] = useState(props.isActive);
-
   const [timeSince, setTimeSince] = useState(0);
 
   useEffect(() => {
@@ -49,6 +49,10 @@ const Tracker = (props) => {
     return output;
   };
 
+  const handleModal = () => {
+    setModalIsOpen(!modalIsOpen);
+  };
+
   return (
     <Swipeable>
       <View style={[styles.card, styles.shadow]}>
@@ -65,6 +69,9 @@ const Tracker = (props) => {
           placeholder="Time Tracker Description"
         />
         <Text>{clock(timeSince)}</Text>
+        <Text>
+          <Text style={text.title}>Total:</Text> {clock(total() / 1000)}
+        </Text>
         <View style={btn.btnContainer}>
           {isActive ? (
             <TouchableOpacity
@@ -82,17 +89,7 @@ const Tracker = (props) => {
             </TouchableOpacity>
           )}
         </View>
-
-        {prevLog.map((item, i) => {
-          return (
-            <View key={i}>
-              <Text>start: {new Date(item.start).toISOString()}</Text>
-              <Text>end: {new Date(item.end).toISOString()}</Text>
-              <Text>{clock(item.duration / 1000)}</Text>
-            </View>
-          );
-        })}
-        <Text>Total: {clock(total() / 1000)}</Text>
+        <TrackerLogModal prevLog={prevLog} total={clock(total() / 1000)} />
       </View>
     </Swipeable>
   );

@@ -4,6 +4,7 @@ import { Tracker, NewTracker } from "../components";
 import { styles } from "../css";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
+
 const TrackerScreen = () => {
   const [trackers, setTrackers] = useState([]);
 
