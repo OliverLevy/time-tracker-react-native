@@ -38,6 +38,15 @@ export const text = StyleSheet.create({
   white: {
     color: "white",
   },
+  small: {
+    fontSize: 8,
+    color: "grey",
+  },
+  corner: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+  },
 });
 
 export const swipeDrawer = StyleSheet.create({
@@ -113,6 +122,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     backgroundColor: "white",
+    position: "relative",
   },
 
   shadow: {

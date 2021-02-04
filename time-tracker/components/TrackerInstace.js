@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { clock } from "../helpers";
 import { Text, View, TouchableOpacity } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { styles, btn, text, swipeDrawer } from "../css";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-const TrackerInstance = ({ item, i }) => {
+const TrackerInstance = ({ item, index, prevLog, setPrevLog }) => {
   const [startDateTime, setstartDateTime] = useState(new Date(item.start));
   const [endDateTime, setEndDateTime] = useState(new Date(item.end));
 
+  const drawer = useRef(null);
+
   const edit = () => {};
 
-  const deleteTimer = () => {};
+  const deleteTimer = () => {
+    const newArr = prevLog.filter((log, i) => i !== index);
+    setPrevLog(newArr);
+    drawer.current.close();
+  };
 
   const swipeRight = () => {
     return (
@@ -30,8 +36,8 @@ const TrackerInstance = ({ item, i }) => {
   };
 
   return (
-    <Swipeable renderRightActions={swipeRight}>
-      <View key={i} style={[styles.card, styles.shadow]}>
+    <Swipeable renderRightActions={swipeRight} ref={drawer}>
+      <View style={[styles.card, styles.shadow]}>
         <Text>
           <Text style={text.title}>start:</Text>{" "}
           {new Date(item.start).toLocaleString()}
@@ -46,6 +52,7 @@ const TrackerInstance = ({ item, i }) => {
         </Text>
         <DateTimePicker value={startDateTime} mode="datetime" />
         <DateTimePicker value={endDateTime} mode="datetime" />
+        <Text style={[text.small, text.corner]}>swipe left</Text>
       </View>
     </Swipeable>
   );

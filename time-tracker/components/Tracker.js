@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { clock } from "../helpers";
 import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-import { styles, input, btn, text } from "../css";
+import { styles, input, btn, text, swipeDrawer } from "../css";
 import TrackerLogModal from "./TrackerLogModal";
 
 const Tracker = (props) => {
@@ -12,6 +12,9 @@ const Tracker = (props) => {
   const [prevLog, setPrevLog] = useState([]);
   const [isActive, setIsActive] = useState(props.isActive);
   const [timeSince, setTimeSince] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const drawer = useRef(null);
 
   useEffect(() => {
     if (isActive) {
@@ -49,47 +52,90 @@ const Tracker = (props) => {
     return output;
   };
 
-  const handleModal = () => {
-    setModalIsOpen(!modalIsOpen);
+  const edit = () => {
+    setIsEditing(!isEditing);
+    drawer.current.close();
+  };
+
+  const save = () => {
+    setIsEditing(false);
+  };
+
+  const deleteTimer = () => {
+    const newArr = props.trackers.filter((tracker) => tracker.id !== props.id);
+    props.setTrackers(newArr);
+    drawer.current.close();
+  };
+
+  const swipeRight = () => {
+    return (
+      <View style={[swipeDrawer.card, swipeDrawer.shadow]}>
+        <TouchableOpacity style={[btn.full, btn.green, btn.btn]} onPress={edit}>
+          <Text style={[text.white]}>Edit</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[btn.full, btn.red, btn.btn]}
+          onPress={deleteTimer}
+        >
+          <Text style={[text.white]}>Delete</Text>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   return (
-    <Swipeable>
+    <Swipeable renderRightActions={swipeRight} ref={drawer}>
       <View style={[styles.card, styles.shadow]}>
         <TextInput
           style={[input.input, input.radius, input.active]}
           value={title}
-          onChange={setTitle}
+          onChangeText={setTitle}
           placeholder="Time Tracker Name"
+          editable={isEditing}
         />
         <TextInput
           style={[input.input, input.radius, input.textArea, input.active]}
           value={description}
-          onChange={setDescription}
+          onChangeText={setDescription}
           placeholder="Time Tracker Description"
+          editable={isEditing}
         />
         <Text>{clock(timeSince)}</Text>
         <Text>
           <Text style={text.title}>Total:</Text> {clock(total() / 1000)}
         </Text>
-        <View style={btn.btnContainer}>
-          {isActive ? (
-            <TouchableOpacity
-              style={[btn.btn, btn.full, btn.red]}
-              onPress={stop}
-            >
-              <Text style={[text.white]}>Stop</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={[btn.btn, btn.full, btn.green]}
-              onPress={startNewLog}
-            >
-              <Text style={[text.white]}>Start</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        <TrackerLogModal prevLog={prevLog} total={clock(total() / 1000)} />
+        {isEditing ? (
+          <TouchableOpacity
+            style={[btn.btn, btn.full, btn.green]}
+            onPress={save}
+          >
+            <Text style={text.white}>Save</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={btn.btnContainer}>
+            {isActive ? (
+              <TouchableOpacity
+                style={[btn.btn, btn.full, btn.red]}
+                onPress={stop}
+              >
+                <Text style={[text.white]}>Stop</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={[btn.btn, btn.full, btn.green]}
+                onPress={startNewLog}
+              >
+                <Text style={[text.white]}>Start</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+
+        <TrackerLogModal
+          prevLog={prevLog}
+          setPrevLog={setPrevLog}
+          total={clock(total() / 1000)}
+        />
       </View>
     </Swipeable>
   );

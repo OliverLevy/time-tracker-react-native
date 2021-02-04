@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -11,7 +11,7 @@ import {
 import { styles, btn, text } from "../css";
 import TrackerInstance from "./TrackerInstace";
 
-const TrackerLogModal = ({ prevLog, total }) => {
+const TrackerLogModal = ({ prevLog, setPrevLog, total }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const handleModal = () => {
@@ -48,7 +48,15 @@ const TrackerLogModal = ({ prevLog, total }) => {
             <View>
               <View>
                 {prevLog.map((item, i) => {
-                  return <TrackerInstance item={item} i={i} key={i} />;
+                  return (
+                    <TrackerInstance
+                      prevLog={prevLog}
+                      setPrevLog={setPrevLog}
+                      item={item}
+                      index={i}
+                      key={i}
+                    />
+                  );
                 })}
               </View>
             </View>

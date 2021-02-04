@@ -148,6 +148,7 @@ const Timer = (props) => {
             <Text style={[text.text, text.white]}>Save</Text>
           </TouchableOpacity>
         )}
+        <Text style={[text.small, text.corner]}>swipe left</Text>
       </View>
     </Swipeable>
   );
